@@ -1,23 +1,23 @@
 <?php
+require 'lib/PHPMailer/PHPMailer.php';
+require 'lib/PHPMailer/SMTP.php';
+require 'lib/PHPMailer/Exception.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
-
 function sendConfirmationEmail($toEmail, $orderId) {
     $mail = new PHPMailer(true);
-    
+
     try {
-        // Ustawienia serwera SMTP
         $mail->isSMTP();
-        $mail->Host = 'smtp.example.com';      // ← Zmień na swój serwer SMTP
+        $mail->Host = 'smtp.example.com'; // 🔁 Zmień!
         $mail->SMTPAuth = true;
-        $mail->Username = 'twoj_email@example.com'; // ← Twój email
-        $mail->Password = 'twoje_haslo';            // ← Hasło do maila
+        $mail->Username = 'twoj_email@example.com'; // 🔁 Zmień!
+        $mail->Password = 'twoje_haslo';             // 🔁 Zmień!
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        // Dane nadawcy i odbiorcy
         $mail->setFrom('twoj_email@example.com', 'GreenStyle');
         $mail->addAddress($toEmail);
 
@@ -28,8 +28,8 @@ function sendConfirmationEmail($toEmail, $orderId) {
                        <p>Będziemy Cię informować o dalszym statusie.</p>";
 
         $mail->send();
-        // echo 'E-mail został wysłany.';
+        // Możesz dodać logowanie sukcesu, np. do pliku logów
     } catch (Exception $e) {
-        // echo "Błąd wysyłki: {$mail->ErrorInfo}";
+        // Możesz dodać logowanie błędów
     }
 }
