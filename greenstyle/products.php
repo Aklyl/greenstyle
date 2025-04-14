@@ -1,33 +1,69 @@
 <?php
 require 'db.php';
-session_start();
 
-$id = $_GET['id'] ?? null;
+// Pobierz kategorie
+$categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
-if (!$id) {
-    die("Nie podano produktu.");
+// Parametry
+$search = $_GET['search'] ?? '';
+$category = $_GET['category'] ?? '';
+$sort = $_GET['sort'] ?? '';
+
+$sql = "SELECT * FROM products WHERE 1=1";
+$params = [];
+
+// Szukanie
+if ($search) {
+    $sql .= " AND name LIKE ?";
+    $params[] = "%$search%";
 }
 
-$stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-$stmt->execute([$id]);
-$product = $stmt->fetch();
-
-if (!$product) {
-    die("Produkt nie istnieje.");
+// Filtrowanie
+if ($category) {
+    $sql .= " AND category_id = ?";
+    $params[] = $category;
 }
+
+// Sortowanie
+if ($sort == 'price_asc') $sql .= " ORDER BY price ASC";
+elseif ($sort == 'price_desc') $sql .= " ORDER BY price DESC";
+else $sql .= " ORDER BY id DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$products = $stmt->fetchAll();
 ?>
 
-<h2><?= htmlspecialchars($product['name']) ?></h2>
-<img src="uploads/<?= $product['image'] ?>" alt="" width="300px"><br>
-<p><strong>Cena:</strong> <?= number_format($product['price'], 2) ?> zł</p>
-<p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
+<h2>Sklep</h2>
 
-<?php if (isset($_SESSION['user'])): ?>
-    <form method="post" action="add_to_cart.php">
-        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-        Ilość: <input type="number" name="quantity" value="1" min="1">
-        <button type="submit">Dodaj do koszyka</button>
-    </form>
-<?php else: ?>
-    <p><a href="login.php">Zaloguj się</a>, aby dodać do koszyka.</p>
-<?php endif; ?>
+<form method="get">
+    <input type="text" name="search" placeholder="Szukaj..." value="<?= htmlspecialchars($search) ?>">
+    
+    <select name="category">
+        <option value="">Wszystkie kategorie</option>
+        <?php foreach ($categories as $c): ?>
+            <option value="<?= $c['id'] ?>" <?= $c['id'] == $category ? 'selected' : '' ?>>
+                <?= htmlspecialchars($c['name']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
+    <select name="sort">
+        <option value="">Sortuj wg</option>
+        <option value="price_asc" <?= $sort == 'price_asc' ? 'selected' : '' ?>>Cena rosnąco</option>
+        <option value="price_desc" <?= $sort == 'price_desc' ? 'selected' : '' ?>>Cena malejąco</option>
+    </select>
+
+    <button type="submit">Szukaj</button>
+</form>
+
+<br>
+
+<?php foreach ($products as $p): ?>
+    <div style="border: 1px solid #ccc; padding: 10px; margin: 10px;">
+        <h3><?= htmlspecialchars($p['name']) ?></h3>
+        <p><?= htmlspecialchars($p['description']) ?></p>
+        <p><strong><?= number_format($p['price'], 2) ?> zł</strong></p>
+        <a href="product.php?id=<?= $p['id'] ?>">Szczegóły</a>
+    </div>
+<?php endforeach; ?>
