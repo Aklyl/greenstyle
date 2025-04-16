@@ -12,33 +12,52 @@ $products = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <title>Panel administratora</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <title>Panel administratora - GreenStyle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>👨‍💼 Panel administratora</h1>
-    <p>Witaj, <?= htmlspecialchars($_SESSION['user']['email']) ?></p>
 
-    <ul>
-        <li><a href="add_product.php">➕ Dodaj nowy produkt</a></li>
-        <li><a href="orders.php">🧾 Zobacz zamówienia</a></li>
-        <li><a href="../index.php">🏠 Przejdź do strony głównej sklepu</a></li>
-        <li><a href="../logout.php">🚪 Wyloguj</a></li>
-    </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.php">👨‍💼 GreenStyle Admin</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="../index.php">🏠 Strona główna sklepu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="add_product.php">➕ Dodaj produkt</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="orders.php">🧾 Zamówienia</a>
+        </li>
+      </ul>
+      <span class="navbar-text text-light me-3">
+        Zalogowany jako: <?= htmlspecialchars($_SESSION['user']['email']) ?>
+      </span>
+      <a href="../logout.php" class="btn btn-outline-light btn-sm">🚪 Wyloguj</a>
+    </div>
+  </div>
+</nav>
 
+<div class="container">
     <h2>📦 Lista produktów</h2>
 
-    <table border="1" cellpadding="8" cellspacing="0">
-        <tr>
-            <th>ID</th>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Cena (zł)</th>
-            <th>Obraz</th>
-            <th>Akcje</th>
-        </tr>
+    <table class="table table-striped table-bordered align-middle mt-3">
+        <thead class="table-success">
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Cena (zł)</th>
+                <th>Obraz</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
         <?php foreach ($products as $product): ?>
             <tr>
                 <td><?= $product['id'] ?></td>
@@ -51,11 +70,14 @@ $products = $stmt->fetchAll();
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="edit_product.php?id=<?= $product['id'] ?>">✏️ Edytuj</a> |
-                    <a href="delete_product.php?id=<?= $product['id'] ?>" onclick="return confirm('Na pewno usunąć produkt?');">🗑️ Usuń</a>
+                    <a href="edit_product.php?id=<?= $product['id'] ?>" class="btn btn-warning btn-sm">✏️ Edytuj</a>
+                    <a href="delete_product.php?id=<?= $product['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Na pewno usunąć produkt?');">🗑️ Usuń</a>
                 </td>
             </tr>
         <?php endforeach; ?>
+        </tbody>
     </table>
+</div>
+
 </body>
 </html>

@@ -18,7 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_dir = '../uploads/';
         $image_name = time() . '_' . basename($_FILES['image']['name']);
         $target_file = $target_dir . $image_name;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+        if (move_uploaded_file($_FILES['image']['tmp_name'],'../uploads/'. $target_file)) {
+
+            //move_uploaded_file($_FILES['image']['tmp_name'], '../uploads/' . $filename);
+
             $image_path = 'uploads/' . $image_name;
         } else {
             $errors[] = 'Błąd przy zapisie zdjęcia.';
