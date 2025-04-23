@@ -2,9 +2,13 @@
 session_start();
 require '../db.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['is_admin'] != 1) {
+
+
+// Sprawdzamy, czy użytkownik jest zalogowany i ma rolę 'admin'
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     die('Brak dostępu');
 }
+
 
 // Pobierz wszystkie zamówienia z użytkownikami
 $stmt = $pdo->query("
