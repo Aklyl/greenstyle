@@ -2,7 +2,7 @@
 session_start();
 require '../db.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['is_admin'] != 1) {
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     die('Brak dostępu');
 }
 

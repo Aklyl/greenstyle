@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 12 Maj 2025, 10:46
--- Wersja serwera: 10.4.22-MariaDB
--- Wersja PHP: 8.1.2
+-- Czas generowania: 13 Maj 2025, 11:51
+-- Wersja serwera: 10.4.27-MariaDB
+-- Wersja PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,8 @@ CREATE TABLE `cart` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 1
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `size` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -43,20 +44,30 @@ CREATE TABLE `cart` (
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `total_price` decimal(10,2) NOT NULL DEFAULT 0.00
+  `total_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` varchar(32) DEFAULT 'Nowe',
+  `size` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Zrzut danych tabeli `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `address`, `phone`, `created_at`, `total_price`) VALUES
-(1, 2, 'test test test 1/2', '70000000000', '2025-05-12 08:34:42', '0.00'),
-(2, 5, 'test test test 1/233', '4343434343', '2025-05-12 08:39:41', '0.00'),
-(3, 5, 'po zmianie', '23424424', '2025-05-12 08:42:48', '0.00');
+INSERT INTO `orders` (`id`, `user_id`, `address`, `phone`, `created_at`, `total_price`, `status`, `size`) VALUES
+(1, 2, 'test test test 1/2', '70000000000', '2025-05-12 08:34:42', '0.00', 'Anulowane', NULL),
+(2, 5, 'test test test 1/233', '4343434343', '2025-05-12 08:39:41', '0.00', 'Nowe', NULL),
+(3, 5, 'po zmianie', '23424424', '2025-05-12 08:42:48', '0.00', 'Nowe', NULL),
+(4, 5, 'sdfsfdfsf', 'dfsdfsdfsf', '2025-05-13 08:46:09', '0.00', 'Nowe', NULL),
+(5, 5, 'ertetetete', 'ertetretertert', '2025-05-13 08:46:43', '0.00', 'W przygotowaniu', NULL),
+(6, 5, 'sdsdfsdf', 'sdfsdf', '2025-05-13 09:12:14', '0.00', 'Nowe', NULL),
+(7, 2, 'sdf', 'dsf', '2025-05-13 09:15:54', '0.00', 'Nowe', NULL),
+(8, 2, 'test11', 'test11', '2025-05-13 09:42:21', '0.00', 'Nowe', NULL),
+(9, 5, 'AASDADSADA', 'ASDASDASDA', '2025-05-13 09:44:19', '0.00', 'Nowe', NULL),
+(10, 5, 'asdadsa', 'adsads', '2025-05-13 09:47:47', '0.00', 'Nowe', NULL),
+(11, 5, 'hjkhjkhjk', 'hjkhkjh', '2025-05-13 09:49:15', '0.00', 'Nowe', NULL);
 
 -- --------------------------------------------------------
 
@@ -69,19 +80,23 @@ CREATE TABLE `order_items` (
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `price` decimal(10,2) NOT NULL
+  `price` decimal(10,2) NOT NULL,
+  `size` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Zrzut danych tabeli `order_items`
 --
 
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price`) VALUES
-(1, 1, 3, 1, '54.00'),
-(2, 1, 2, 1, '90.00'),
-(3, 1, 1, 1, '50.00'),
-(4, 2, 3, 3, '54.00'),
-(5, 3, 3, 1, '54.00');
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price`, `size`) VALUES
+(8, 6, 10, 1, '139.99', NULL),
+(9, 7, 10, 1, '139.99', 'S'),
+(10, 8, 9, 1, '64.99', 'XL'),
+(11, 8, 9, 1, '64.99', 'L'),
+(12, 9, 10, 1, '139.99', 'XS'),
+(13, 9, 9, 1, '64.99', 'XS'),
+(14, 10, 8, 1, '89.99', 'XS'),
+(15, 11, 7, 1, '119.99', 'L');
 
 -- --------------------------------------------------------
 
@@ -91,10 +106,10 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price`) 
 
 CREATE TABLE `products` (
   `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -102,9 +117,14 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `image`) VALUES
-(1, 'koszulak', 'test', '50.00', 'Zrzut ekranu 2025-02-21 084143.png'),
-(2, 'test2', 'test2', '90.00', 'Zrzut ekranu 2025-03-14 083348.png'),
-(3, 'test3.2.4', 'sdsds', '54.00', 'uploads/1747038735_Zrzut ekranu 2025-02-21 084143.png');
+(4, 'Koszulka Classic Eco', 'Klasyczna koszulka z bawełny organicznej.', '49.99', 'uploads/1747126986_kszulkaa.jpg'),
+(5, 'Koszulka Sport Black', 'Lekka koszulka sportowa z recyklingowanego poliestru, kolor czarny', '59.99', 'uploads/1747127039_pobrane.jpg'),
+(6, 'Koszulka Bamboo Soft', 'Miękka koszulka z włókna bambusowego, kolor czarny.', '54.99', 'uploads/1747127279_tshirt.jpg'),
+(7, 'Spodnie Chino Eco', 'Wygodne spodnie chino z bawełny organicznej, kolor czarny.', '119.99', 'uploads/1747127105_spodnid1.jpg'),
+(8, 'Spodnie Dresowe Basic', 'podnie dresowe z recyklingu, kolor szary.', '89.99', 'uploads/1747127156_dres.jpg'),
+(9, 'Koszulka Summer Print', 'Kolorowa koszulka z nadrukiem, wykonana z bawełny organicznej.', '64.99', 'uploads/1747127176_shopping.jpg'),
+(10, 'Spodnie Jeans Eco', 'Jeansy z domieszką włókien z recyklingu, kolor szary.', '139.99', 'uploads/1747127200_spodnie.jpg'),
+(11, 'Koszulka Longsleeve Forest', 'Długi rękaw z miękkiej bawełny organicznej, kolor butelkowa zieleń.', '69.99', 'uploads/1747127251_zielen.jpg');
 
 -- --------------------------------------------------------
 
@@ -114,10 +134,10 @@ INSERT INTO `products` (`id`, `name`, `description`, `price`, `image`) VALUES
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('user','admin') COLLATE utf8mb4_unicode_ci DEFAULT 'user'
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('user','admin') DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -176,25 +196,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT dla tabeli `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT dla tabeli `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT dla tabeli `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `users`

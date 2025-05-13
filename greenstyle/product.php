@@ -2,7 +2,7 @@
 require 'db.php';
 
 // Pobierz kategorie
-$categories = $pdo->query("SELECT * FROM categories")->fetchAll();
+// $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
 // Parametry
 $search = $_GET['search'] ?? '';
